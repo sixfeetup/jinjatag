@@ -1,3 +1,4 @@
+import six
 import sys
 import inspect
 import traceback
@@ -12,7 +13,7 @@ from jinja2.ext import Extension
 from jinja2.lexer import Token
 
 
-import extension
+from . import extension
 
 __all__ = ('simple_tag', 'simple_block', 'multibody_block', 'simple_context_tag',)
 
@@ -30,7 +31,7 @@ def create_extension_decorator(cls):
     """
     def outer_dec(name=None, *args, **kwargs):
         def dec(func):
-            tag_name = name if isinstance(name, basestring) and name else func.__name__
+            tag_name = name if isinstance(name, six.string_types) and name else func.__name__
             new_cls = type(tag_name, (cls,), {
                     'tags': set([tag_name]),
                     'tag_func': staticmethod(func),
@@ -73,7 +74,7 @@ class BaseTag(Extension):
             if argspec.keywords:
                 arg_list.append('**' + argspec.keywords)
             raise TypeError("Failed to satisfy arguments for {0}({1}): provided ({2}).".format(
-                    iter(self.tags).next(),
+                    next(iter(self.tags)),
                     ', '.join(arg_list),
                     ', '.join([repr(arg) for arg in args] + ['{0}={1}'.format(k, repr(v)) for k, v in kwargs.items()])))
 
@@ -95,7 +96,7 @@ class BaseTag(Extension):
 @create_extension_decorator
 class simple_tag(BaseTag):
     def parse(self, parser):
-        tag = parser.stream.next()
+        tag = next(parser.stream)
 
         attrs = self.parse_attrs(parser)
 
@@ -108,7 +109,7 @@ class simple_tag(BaseTag):
 @create_extension_decorator
 class simple_context_tag(BaseTag):
     def parse(self, parser):
-        tag = parser.stream.next()
+        tag = next(parser.stream)
 
         attrs = self.parse_attrs(parser, with_context=True)
 
@@ -120,7 +121,7 @@ class simple_context_tag(BaseTag):
 @create_extension_decorator
 class simple_block(BaseTag):
     def parse(self, parser):
-        tag = parser.stream.next()
+        tag = next(parser.stream)
 
         attrs = self.parse_attrs(parser)
 
@@ -139,7 +140,7 @@ class multibody_block(BaseTag):
     def parse(self, parser):
         INSIDE_BLOCK, OUTSIDE_BLOCK = 0, 1
 
-        tag = parser.stream.next()
+        tag = next(parser.stream)
 
         end_tags_in_block = [
             'name:{0}_endblock'.format(tag.value),
@@ -167,7 +168,7 @@ class multibody_block(BaseTag):
 
 
         while True:
-            sub_tag = parser.stream.next()
+            sub_tag = next(parser.stream)
             sub_tag_name = sub_tag.value
 
             tag_index = end_tags[state].index('name:' + sub_tag_name)

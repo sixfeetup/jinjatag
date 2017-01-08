@@ -8,6 +8,7 @@ here = os.path.dirname(__file__)
 
 requirements = [
     "jinja2>=2.5",
+    "six",
     ]
 
 # Require the external importlib package if python 2.6
@@ -38,5 +39,6 @@ setuptools.setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 3.5",
     ]
 )

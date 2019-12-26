@@ -1,10 +1,14 @@
 import os
+import re
 import sys
 import setuptools
 
-from jinjatag.version import __version__
-
 here = os.path.dirname(__file__)
+
+# Read version number
+pat = r'__version__ = \((\w+), (\w+), (\w+)\)'
+with open(os.path.join(here, 'jinjatag', 'version.py')) as f:
+    version = '.'.join(re.search(pat, f.read()).groups())
 
 requirements = [
     "jinja2>=2.5",
@@ -18,7 +22,7 @@ if version_tuple[0] < 3 and version_tuple[1] < 7:
 
 setuptools.setup(
     name = "jinjatag",
-    version = '.'.join(str(c) for c in __version__),
+    version = version,
     author = "Dave Mankoff",
     author_email = "mankyd@gmail.com",
     description = "A library to make Jinja2 Extensions Easy",

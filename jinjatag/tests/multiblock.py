@@ -99,8 +99,8 @@ body
 
     def test_dynamic_block_names(self):
         tmpl = self.env.from_string('{% mbb_dynamic_block_names x="foo" %} {% mbb_dynamic_block_names_block i**2 + 3 %}foo{% mbb_dynamic_block_names_end_block %}{% end_mbb_dynamic_block_names %}')
-        self.assertEquals(tmpl.render({'i': 2}), u"[('7', u'foo'), ('body', u' '), ('x', 'foo')]")
-        self.assertEquals(tmpl.render({'i': 3}), u"[('12', u'foo'), ('body', u' '), ('x', 'foo')]")
+        self.assertEquals(tmpl.render({'i': 2}), repr([('7', u'foo'), ('body', u' '), ('x', 'foo')]))
+        self.assertEquals(tmpl.render({'i': 3}), repr([('12', u'foo'), ('body', u' '), ('x', 'foo')]))
 
     @jinjatag.multibody_block
     def mbb_nosubblock_threaded(body, title, cls, header_links=None, corners='all'):
@@ -130,7 +130,7 @@ body
         num_threads = 25
         def sub_test():
             for i in range(10):
-                self.assertEquals(hashlib.sha256(tmpl.render()).hexdigest(), '469bf40757716ed125208f26f9ae42673c717d53821b302e395231551b406897')
+                self.assertEquals(hashlib.sha256(tmpl.render().encode('utf-8')).hexdigest(), '469bf40757716ed125208f26f9ae42673c717d53821b302e395231551b406897')
             num_successful[0] += 1
 
         threads = [threading.Thread(target=sub_test) for i in range(num_threads)]

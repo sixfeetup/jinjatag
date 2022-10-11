@@ -8,7 +8,7 @@ try:
 except ImportError:
     import threading as plocal
 
-from jinja2 import Environment, environmentfunction, nodes
+from jinja2 import Environment, nodes
 from jinja2.ext import Extension
 from jinja2.lexer import Token
 
